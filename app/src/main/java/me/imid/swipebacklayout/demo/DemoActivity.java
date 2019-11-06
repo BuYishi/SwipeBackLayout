@@ -119,7 +119,7 @@ public class DemoActivity extends SwipeBackXActivity implements View.OnClickList
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         findViewById(R.id.btn_start).setOnClickListener(this);
         findViewById(R.id.btn_finish).setOnClickListener(this);
-        mTrackingModeGroup = (RadioGroup) findViewById(R.id.tracking_mode);
+        mTrackingModeGroup = findViewById(R.id.tracking_mode);
     }
 
     private int[] getColorIds() {
