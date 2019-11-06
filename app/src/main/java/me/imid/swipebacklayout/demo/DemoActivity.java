@@ -3,7 +3,6 @@ package me.imid.swipebacklayout.demo;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,27 +14,21 @@ import android.widget.RadioGroup;
 
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.Objects;
+
 import me.imid.swipebacklayout.lib.SwipeBackLayout;
-import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 
 /**
  * Created by Issac on 8/11/13.
  */
-public class DemoActivity extends SwipeBackActivity implements View.OnClickListener {
+public class DemoActivity extends SwipeBackXActivity implements View.OnClickListener {
     private static final int VIBRATE_DURATION = 20;
-
     private int[] mBgColors;
-
-    private static int mBgIndex = 0;
-
+    private static int mBgIndex = -1;
     private String mKeyTrackingMode;
-
     private RadioGroup mTrackingModeGroup;
-
     private SwipeBackLayout mSwipeBackLayout;
-
-    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +68,12 @@ public class DemoActivity extends SwipeBackActivity implements View.OnClickListe
 
             @Override
             public void onEdgeTouch(int edgeFlag) {
-                vibrate(VIBRATE_DURATION);
+                vibrate();
             }
 
             @Override
             public void onScrollOverThreshold() {
-                vibrate(VIBRATE_DURATION);
+                vibrate();
             }
         });
     }
@@ -116,11 +109,10 @@ public class DemoActivity extends SwipeBackActivity implements View.OnClickListe
     }
 
     private void changeActionBarColor() {
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getColors()[mBgIndex]));
-        mBgIndex++;
-        if (mBgIndex >= getColors().length) {
+        if (++mBgIndex == getColorIds().length) {
             mBgIndex = 0;
         }
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(getResources().getColor(getColorIds()[mBgIndex])));
     }
 
     private void findViews() {
@@ -130,26 +122,25 @@ public class DemoActivity extends SwipeBackActivity implements View.OnClickListe
         mTrackingModeGroup = (RadioGroup) findViewById(R.id.tracking_mode);
     }
 
-    private int[] getColors() {
+    private int[] getColorIds() {
         if (mBgColors == null) {
-            Resources resource = getResources();
-            mBgColors = new int[] {
-                    resource.getColor(R.color.androidColorA),
-                    resource.getColor(R.color.androidColorB),
-                    resource.getColor(R.color.androidColorC),
-                    resource.getColor(R.color.androidColorD),
-                    resource.getColor(R.color.androidColorE),
+            mBgColors = new int[]{
+                    R.color.androidColorA,
+                    R.color.androidColorB,
+                    R.color.androidColorC,
+                    R.color.androidColorD,
+                    R.color.androidColorE,
             };
         }
         return mBgColors;
     }
 
-    private void vibrate(long duration) {
+    private void vibrate() {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         long[] pattern = {
-                0, duration
+                0, DemoActivity.VIBRATE_DURATION
         };
-        vibrator.vibrate(pattern, -1);
+        Objects.requireNonNull(vibrator).vibrate(pattern, -1);
     }
 
     @Override
@@ -183,4 +174,13 @@ public class DemoActivity extends SwipeBackActivity implements View.OnClickListe
         }
     }
 
+    @Override
+    protected int getStatusBarColorId() {
+        return getColorIds()[mBgIndex];
+    }
+
+    @Override
+    protected boolean makeStatusBarContentBlack() {
+        return true;
+    }
 }
