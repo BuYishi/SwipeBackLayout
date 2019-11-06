@@ -1,1 +1,2 @@
-include ':library', ':samples'
+include ':app', ':swipe_back_layout'
+rootProject.name='SwipeBackLayout'
